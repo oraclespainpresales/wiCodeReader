@@ -69,3 +69,7 @@ router.get(restURI, (req, res) => {
   res.status(204).send();
   res.end();
 });
+
+server.listen(PORT, () => {
+  log.info(REST, "REST Server initialized successfully");
+});
