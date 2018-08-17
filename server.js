@@ -21,7 +21,6 @@ class Event extends EventEmitter {}
 const event = new Event();
 
 // Web server stuff
-var dir = path.join(__dirname, 'images');
 var mime = {
     html: 'text/html',
     txt: 'text/plain',
