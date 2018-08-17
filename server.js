@@ -99,7 +99,7 @@ router.get(pictureURI, (req, res) => {
   log.verbose(REST, "Photo take requested. Random filename: %s", filename);
   camera.set("output", "./images/" + filename);
   camera.start();
-  event.on('finished', function(result) {
+  event.once('finished', function(result) {
     res.status(200).send(result);
     res.end();
   });
