@@ -62,6 +62,10 @@ camera.on("exit", (timestamp) => {
     console.log(" exit at " + timestamp );
 });
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(restURI, router);
+
 router.get(restURI, (req, res) => {
   var filename = uuid();
   camera.set("output", "./images/" + filename);
