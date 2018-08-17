@@ -81,7 +81,7 @@ camera.on("read", (err, timestamp, filename) => {
   log.verbose(CAMERA, "Photo take completed. File: %s", filename);
   log.verbose(CODE, "Looking for a barcode...");
   code.decodeSingle({
-    src: __dirname + IMAGES + filename,
+    src: IMAGES + filename,
     numOfWorkers: 0,  // Needs to be 0 when used within node
     inputStream: {
       size: 640  // restrict input-size to be 800px in width (long-side)
