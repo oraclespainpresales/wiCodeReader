@@ -120,21 +120,40 @@ router.get(pictureURI, (req, res) => {
   var filename = uuid() + ".jpg";
   log.verbose(REST, "Photo take requested. Random filename: %s", filename);
   camera.set("output", "./images/" + filename);
-  camera.start();
   event.once('finished', function(result) {
     res.status(200).send(result);
     res.end();
   });
+  camera.start();
 });
 
 router.get(viewURI, function (req, res) {
-  var file = 'images/' + req.params.filename;
-/**
-  var file = path.join(dir, req.path.replace(/\/$/, '/index.html'));
-  if (file.indexOf(dir + path.sep) !== 0) {
-    return res.status(403).end('Forbidden');
-  }
-**/
+  serveImage(req.params.filename, res);
+});
+
+router.get(lastURI, function (req, res) {
+  var dir = '.';
+  var files = fs.readdirSync(dir);
+  files = files.map(function (fileName) {
+    return {
+      name: fileName,
+      time: fs.statSync(dir + '/' + fileName).mtime.getTime()
+    };
+  })
+  .sort(function (a, b) {
+    return b.time - a.time; })
+  .map(function (v) {
+    return v.name; });
+
+  serveImage(files[0], res);
+});
+
+server.listen(PORT, () => {
+  log.info(REST, "REST Server initialized successfully");
+});
+
+function serveImage( filename, res) {
+  var file = 'images/' + filename;
   var type = mime[path.extname(file).slice(1)] || 'text/plain';
   var s = fs.createReadStream(file);
   s.on('open', function () {
@@ -145,8 +164,4 @@ router.get(viewURI, function (req, res) {
     res.set('Content-Type', 'text/plain');
     res.status(404).end('Not found');
   });
-});
-
-server.listen(PORT, () => {
-  log.info(REST, "REST Server initialized successfully");
-});
+}
