@@ -19,6 +19,7 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
+    "fs-extra": "^7.0.0",
     "lodash": "^4.17.10",
     "npmlog-ts": "0.0.1",
     "quagga": "^0.12.1",

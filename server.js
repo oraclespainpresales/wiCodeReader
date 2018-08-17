@@ -11,7 +11,7 @@ const express = require('express')
     , uuid = require('uuid/v4')
     , EventEmitter = require('events')
     , path = require('path')
-    , fs = require('fs')
+    , fs = require('fs-extra')
 ;
 
 log.level = 'verbose';
@@ -53,6 +53,7 @@ const PROCESS = 'PROCESS'
     , REST    = 'REST'
     , CAMERA  = 'CAMERA'
     , CODE    = 'CODE'
+    , IMAGES  = './images'
 ;
 
 // Detect CTRL-C
@@ -119,7 +120,7 @@ app.use(restURI, router);
 router.get(pictureURI, (req, res) => {
   var filename = uuid() + ".jpg";
   log.verbose(REST, "Photo take requested. Random filename: %s", filename);
-  camera.set("output", "./images/" + filename);
+  camera.set("output", IMAGES + filename);
   event.once('finished', function(result) {
     res.status(200).send(result);
     res.end();
@@ -132,7 +133,7 @@ router.get(viewURI, function (req, res) {
 });
 
 router.get(lastURI, function (req, res) {
-  var dir = './images';
+  var dir = IMAGES;
   var files = fs.readdirSync(dir);
   files = files.map(function (fileName) {
     return {
@@ -146,6 +147,12 @@ router.get(lastURI, function (req, res) {
     return v.name; });
 
   serveImage(files[0], res);
+});
+
+router.get(clearURI, function (req, res) {
+  var x = fs.emptyDirSync(IMAGES);
+  res.status(200).send(x);
+  res.end();
 });
 
 server.listen(PORT, () => {
