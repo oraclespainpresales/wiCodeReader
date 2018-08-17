@@ -73,16 +73,20 @@ camera.on("read", (err, timestamp, filename) => {
           readers: ["code_128_reader"] // List of active readers
       },
   }, (result) => {
+    var response = { result: "Failure", message: "No result available" };
     if (result) {
-      event.emit('finished', result);
       if(result.codeResult) {
-        log.verbose(CODE, "result: '%s'", result.codeResult.code);
+        response.result = "Success";
+        response.message = result.codeResult.code;
+        log.verbose(CODE, "Code detected: '%s'", result.codeResult.code);
       } else {
-        log.verbose(CODE, "not detected");
+        response.message = "No code detected";
+        log.verbose(CODE, response.message);
       }
     } else {
       log.error(CODE, "No result available!");
     }
+    event.emit('finished', response);
   });
 });
 
