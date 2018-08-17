@@ -9,10 +9,14 @@ const express = require('express')
     , RaspiCam = require("raspicam")
     , code = require('quagga').default
     , uuid = require('uuid/v4')
+    , EventEmitter = require('events')
 ;
 
 log.level = 'verbose';
 log.timestamp = true;
+
+class Event extends EventEmitter {}
+const event = new Event();
 
 // Initializing REST server BEGIN
 const PORT = process.env.READERPORT || 8886
@@ -70,6 +74,7 @@ camera.on("read", (err, timestamp, filename) => {
       },
   }, (result) => {
     if (result) {
+      event.emit(result);
       if(result.codeResult) {
         log.verbose(CODE, "result: '%s'", result.codeResult.code);
       } else {
@@ -94,8 +99,10 @@ router.get(pictureURI, (req, res) => {
   log.verbose(REST, "Photo take requested. Random filename: %s", filename);
   camera.set("output", "./images/" + filename);
   camera.start();
-  res.status(204).send();
-  res.end();
+  event.on('finished', function(result) {
+    res.status(200).send(result);
+    res.end();
+  });
 });
 
 server.listen(PORT, () => {
