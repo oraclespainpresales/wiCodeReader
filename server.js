@@ -59,9 +59,6 @@ camera.on("start", (err, timestamp) => {
 
 camera.on("read", (err, timestamp, filename) => {
   log.verbose(CAMERA, "Photo take completed. File: %s", filename);
-
-  console.log(__dirname + '/images/' + filename);
-
   code.decodeSingle({
       src: __dirname + '/images/' + filename,
       numOfWorkers: 0,  // Needs to be 0 when used within node
@@ -74,7 +71,7 @@ camera.on("read", (err, timestamp, filename) => {
   }, (result) => {
     if (result) {
       if(result.codeResult) {
-        log.verbose(CODE, "result", result.codeResult.code);
+        log.verbose(CODE, "result: '%s'", result.codeResult.code);
       } else {
         log.verbose(CODE, "not detected");
       }
