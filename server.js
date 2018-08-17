@@ -39,7 +39,7 @@ const PORT = process.env.READERPORT || 8886
     , pictureURI = '/take'
     , lastURI    = '/last'
     , listURI    = '/list'
-    , clearURI   = '/clear'
+    , cleanURI   = '/clean'
     , viewURI    = '/view/:filename'
 ;
 
@@ -149,10 +149,14 @@ router.get(lastURI, function (req, res) {
   serveImage(files[0], res);
 });
 
-router.get(clearURI, function (req, res) {
-  var x = fs.emptyDirSync(IMAGES);
-  res.status(200).send(x);
-  res.end();
+router.get(cleanURI, function (req, res) {
+  fs.emptyDir(IMAGES)
+  .then(() => {
+    res.status(200).send({ result: "Success" });
+  })
+  .catch(err => {
+    res.status(200).send({ result: "Failure", message: err });
+  })
 });
 
 server.listen(PORT, () => {
