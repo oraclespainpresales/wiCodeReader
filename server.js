@@ -35,8 +35,6 @@ const PROCESS = 'PROCESS'
 process.on('SIGINT', function() {
   log.info(PROCESS, "Caught interrupt signal");
   log.info(PROCESS, "Exiting gracefully");
-  if (board) board.close()
-  board = undefined;
   process.removeAllListeners()
   if (typeof err != 'undefined')
     log.error(PROCESS, err)
@@ -66,7 +64,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(restURI, router);
 
-router.get(restURI, (req, res) => {
+router.get(pictureURI, (req, res) => {
   var filename = uuid();
   camera.set("output", "./images/" + filename);
   camera.start();
