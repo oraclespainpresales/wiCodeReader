@@ -33,7 +33,7 @@ var mime = {
 };
 
 // Initializing REST server BEGIN
-const PORT = process.env.READERPORT || 8886
+const PORT = 8886
     , restURI    = '/reader'
     , pictureURI = '/take'
     , lastURI    = '/last'
