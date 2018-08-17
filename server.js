@@ -19,6 +19,8 @@ const PORT = process.env.READERPORT || 8886
     , restURI    = '/reader'
     , pictureURI = '/take'
     , lastURI    = '/last'
+    , listURI    = '/list'
+    , clearURI   = '/clear'
 ;
 
 var app    = express()
@@ -45,6 +47,7 @@ var camera = new RaspiCam({
     mode: "photo",
     output: "dummy",
     encoding: "jpg",
+    log: null,
     timeout: 500 // take the picture immediately
 });
 
