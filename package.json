@@ -1,0 +1,28 @@
+{
+  "name": "wicodereader",
+  "version": "1.0.0",
+  "description": "WEDO Industry: Node code to take a picture and parse Barcode",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oraclespainpresales/wiCodeReader.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oraclespainpresales/wiCodeReader/issues"
+  },
+  "homepage": "https://github.com/oraclespainpresales/wiCodeReader#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "lodash": "^4.17.10",
+    "npmlog-ts": "0.0.1",
+    "quagga": "^0.12.1",
+    "raspicam": "^0.2.14",
+    "uuid": "^3.3.2"
+  }
+}
