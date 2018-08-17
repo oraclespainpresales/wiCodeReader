@@ -45,6 +45,7 @@ process.on('SIGINT', function() {
 
 var camera = new RaspiCam({
     mode: "photo",
+    output: "dummy",
     encoding: "jpg",
     timeout: 500 // take the picture immediately
 });
