@@ -74,7 +74,7 @@ camera.on("read", (err, timestamp, filename) => {
       },
   }, (result) => {
     if (result) {
-      event.emit(result);
+      event.emit('finished', result);
       if(result.codeResult) {
         log.verbose(CODE, "result: '%s'", result.codeResult.code);
       } else {
