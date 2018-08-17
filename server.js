@@ -145,6 +145,8 @@ router.get(lastURI, function (req, res) {
   .map(function (v) {
     return v.name; });
 
+  console.log(files[0]);
+
   serveImage(files[0], res);
 });
 
