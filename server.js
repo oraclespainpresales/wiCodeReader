@@ -65,7 +65,7 @@ app.use(bodyParser.json());
 app.use(restURI, router);
 
 router.get(pictureURI, (req, res) => {
-  var filename = uuid();
+  var filename = uuid() + ".jpg";
   camera.set("output", "./images/" + filename);
   camera.start();
   res.status(204).send();
