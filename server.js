@@ -132,7 +132,7 @@ router.get(viewURI, function (req, res) {
 });
 
 router.get(lastURI, function (req, res) {
-  var dir = '.';
+  var dir = './images';
   var files = fs.readdirSync(dir);
   files = files.map(function (fileName) {
     return {
@@ -144,8 +144,6 @@ router.get(lastURI, function (req, res) {
     return b.time - a.time; })
   .map(function (v) {
     return v.name; });
-
-  console.log(files[0]);
 
   serveImage(files[0], res);
 });
