@@ -7,7 +7,7 @@ const express = require('express')
     , log = require('npmlog-ts')
     , _ = require('lodash')
     , RaspiCam = require("raspicam")
-    , Quagga = require('quagga').default
+    , code = require('quagga').default
     , uuid = require('uuid/v4')
 ;
 
@@ -32,6 +32,7 @@ var app    = express()
 const PROCESS = 'PROCESS'
     , REST    = 'REST'
     , CAMERA  = 'CAMERA'
+    , CODE    = 'CODE'
 ;
 
 // Detect CTRL-C
@@ -58,6 +59,27 @@ camera.on("start", (err, timestamp) => {
 
 camera.on("read", (err, timestamp, filename) => {
   log.verbose(CAMERA, "Photo take completed. File: %s", filename);
+
+  code.decodeSingle({
+      src: __dirname + '/images/' + filename,
+      numOfWorkers: 0,  // Needs to be 0 when used within node
+      inputStream: {
+          size: 640  // restrict input-size to be 800px in width (long-side)
+      },
+      decoder: {
+          readers: ["code_128_reader"] // List of active readers
+      },
+  }, (result) => {
+    if (result) {
+      if(result.codeResult) {
+        log.verbose(CODE, "result", result.codeResult.code);
+      } else {
+        log.verbose(CODE, "not detected");
+      }
+    } else {
+      log.error(CODE, "No result available!");
+    }
+  });
 });
 
 camera.on("exit", (timestamp) => {
@@ -70,7 +92,7 @@ app.use(restURI, router);
 
 router.get(pictureURI, (req, res) => {
   var filename = uuid() + ".jpg";
-  log.verbose(CAMERA, "Photo take requested. Random filename: %s", filename);
+  log.verbose(REST, "Photo take requested. Random filename: %s", filename);
   camera.set("output", "./images/" + filename);
   camera.start();
   res.status(204).send();
