@@ -52,7 +52,7 @@ const PROCESS = 'PROCESS'
     , REST    = 'REST'
     , CAMERA  = 'CAMERA'
     , CODE    = 'CODE'
-    , IMAGES  = './images'
+    , IMAGES  = './images/'
 ;
 
 // Detect CTRL-C
@@ -81,7 +81,7 @@ camera.on("read", (err, timestamp, filename) => {
   log.verbose(CAMERA, "Photo take completed. File: %s", filename);
   log.verbose(CODE, "Looking for a barcode...");
   code.decodeSingle({
-    src: __dirname + '/images/' + filename,
+    src: __dirname + IMAGES + filename,
     numOfWorkers: 0,  // Needs to be 0 when used within node
     inputStream: {
       size: 640  // restrict input-size to be 800px in width (long-side)
