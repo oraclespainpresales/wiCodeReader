@@ -31,6 +31,7 @@ var app    = express()
 // Misc
 const PROCESS = 'PROCESS'
     , REST    = 'REST'
+    , CAMERA  = 'CAMERA'
 ;
 
 // Detect CTRL-C
@@ -52,15 +53,15 @@ var camera = new RaspiCam({
 });
 
 camera.on("start", (err, timestamp) => {
-    console.log(" photo started at " + timestamp );
+  log.verbose(CAMERA, "Photo take started...");
 });
 
 camera.on("read", (err, timestamp, filename) => {
-    console.log(" read at " + timestamp + " with filename "+ filename);
+  log.verbose(CAMERA, "Photo take completed. File: %s", filename);
 });
 
 camera.on("exit", (timestamp) => {
-    console.log(" exit at " + timestamp );
+  log.verbose(CAMERA, "Photo take ended");
 });
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -69,6 +70,7 @@ app.use(restURI, router);
 
 router.get(pictureURI, (req, res) => {
   var filename = uuid() + ".jpg";
+  log.verbose(CAMERA, "Photo take requested. Random filename: %s", filename);
   camera.set("output", "./images/" + filename);
   camera.start();
   res.status(204).send();
