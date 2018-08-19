@@ -14,6 +14,12 @@ const express = require('express')
     , fs = require('fs-extra')
 ;
 
+// Log stuff
+const PROCESS = 'PROCESS'
+    , REST    = 'REST'
+    , CAMERA  = 'CAMERA'
+    , CODE    = 'CODE'
+;
 log.level = 'verbose';
 log.timestamp = true;
 
@@ -34,12 +40,12 @@ var mime = {
 
 // Initializing REST server BEGIN
 const PORT = 8886
-    , restURI    = '/reader'
-    , pictureURI = '/take'
-    , lastURI    = '/last'
-    , listURI    = '/list'
-    , cleanURI   = '/clean'
-    , viewURI    = '/view/:filename'
+    , restURI  = '/reader'
+    , takeURI  = '/take'
+    , lastURI  = '/last'
+    , listURI  = '/list'
+    , cleanURI = '/clean'
+    , viewURI  = '/view/:filename'
 ;
 
 var app    = express()
@@ -48,11 +54,9 @@ var app    = express()
 ;
 
 // Misc
-const PROCESS = 'PROCESS'
-    , REST    = 'REST'
-    , CAMERA  = 'CAMERA'
-    , CODE    = 'CODE'
-    , IMAGES  = './images/'
+const IMAGES  = './images/'
+    , DEMOZONEFILE  = '/demozone.dat'
+    , DEFAULTDEMOZONE = 'MADRID'
 ;
 
 // Detect CTRL-C
@@ -64,6 +68,11 @@ process.on('SIGINT', function() {
     log.error(PROCESS, err)
   process.exit(2);
 });
+
+// Get demozone Data
+var DEMOZONE = DEFAULTDEMOZONE;
+fs.readFile(DEMOZONEFILE,'utf8').then((data)=>{DEMOZONE=data.trim()}).catch(() => {});
+log.info(PROCESS, 'Working for demozone: %s', DEMOZONE);
 
 var camera = new RaspiCam({
     mode: "photo",
@@ -116,8 +125,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(restURI, router);
 
-router.get(pictureURI, (req, res) => {
-  var filename = uuid() + ".jpg";
+router.get(takeURI, (req, res) => {
+  var prefix = (fs.readdirSync(IMAGES).length + 1).toString().padStart(4,'0');
+  var filename = DEMOZONE + "_" + prefix + "_" + uuid() + ".jpg";
   log.verbose(REST, "Photo take requested. Random filename: %s", filename);
   camera.set("output", IMAGES + filename);
   event.once('finished', function(result) {
