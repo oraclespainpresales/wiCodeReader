@@ -102,6 +102,7 @@ camera.on("read", (err, timestamp, filename) => {
     var response = { result: "Failure", message: "No result available" };
     if (result) {
       if(result.codeResult) {
+        delete response.message;
         response.result = "Success";
         response.filename = filename;
         response.code = result.codeResult.code;
