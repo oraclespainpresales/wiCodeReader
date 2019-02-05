@@ -57,6 +57,7 @@ var app    = express()
 const IMAGES  = './images/'
     , DEMOZONEFILE  = '/demozone.dat'
     , DEFAULTDEMOZONE = 'MADRID'
+    , FAKEFILE = 'FAKE.json'
 ;
 
 // Detect CTRL-C
@@ -73,6 +74,10 @@ process.on('SIGINT', function() {
 var DEMOZONE = DEFAULTDEMOZONE;
 fs.readFile(DEMOZONEFILE,'utf8').then((data)=>{DEMOZONE=data.trim()}).catch(() => {});
 log.info(PROCESS, 'Working for demozone: %s', DEMOZONE);
+
+// FAKE data to bypass a temporary camera failure
+var FAKE = _.noop();
+fs.readFile(FAKEFILE,'utf8').then((data)=>{FAKE=JSON.parse(data)}).catch(() => {});
 
 var camera = new RaspiCam({
     mode: "photo",
@@ -127,6 +132,20 @@ app.use(bodyParser.json());
 app.use(restURI, router);
 
 router.get(takeURI, (req, res) => {
+
+  if (FAKE && FAKE.truckid && FAKE.enabled === true) {
+    var result = {
+      result: "Success",
+      code: FAKE.truckid
+    }
+
+    log.verbose(CAMERA, "Faking the result with: %j", result);
+
+    res.status(200).send(result);
+    res.end();
+    return;
+  }
+
   var prefix = (fs.readdirSync(IMAGES).length + 1).toString().padStart(4,'0');
   var filename = DEMOZONE + "_" + prefix + "_" + uuid() + ".jpg";
   log.verbose(REST, "Photo take requested. Random filename: %s", filename);
