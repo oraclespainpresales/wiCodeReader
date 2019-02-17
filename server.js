@@ -88,10 +88,12 @@ var camera = new RaspiCam({
 });
 
 camera.on("start", (err, timestamp) => {
+  camera.dataRead = false;
   log.verbose(CAMERA, "Photo take started...");
 });
 
 camera.on("read", (err, timestamp, filename) => {
+  camera.dataRead = true;
   log.verbose(CAMERA, "Photo take completed. File: %s", filename);
   log.verbose(CODE, "Looking for a barcode...");
   code.decodeSingle({
@@ -125,6 +127,11 @@ camera.on("read", (err, timestamp, filename) => {
 
 camera.on("exit", (timestamp) => {
   log.verbose(CAMERA, "Photo take ended");
+  if (!camera.dataRead) {
+    // Exit event but no data read. Most likely the raspistill command failed: no camera detected??
+    let response = { result: "Critical", message: "Camera not available" };
+    event.emit('finished', response);
+  }
 });
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -132,7 +139,7 @@ app.use(bodyParser.json());
 app.use(restURI, router);
 
 router.get(takeURI, (req, res) => {
-
+/**
   if (FAKE && FAKE.truckid && FAKE.enabled === true) {
     var result = {
       result: "Success",
@@ -145,7 +152,7 @@ router.get(takeURI, (req, res) => {
     res.end();
     return;
   }
-
+**/
   var prefix = (fs.readdirSync(IMAGES).length + 1).toString().padStart(4,'0');
   var filename = DEMOZONE + "_" + prefix + "_" + uuid() + ".jpg";
   log.verbose(REST, "Photo take requested. Random filename: %s", filename);
