@@ -129,7 +129,7 @@ camera.on("exit", (timestamp) => {
   log.verbose(CAMERA, "Photo take ended");
   if (!camera.dataRead) {
     // Exit event but no data read. Most likely the raspistill command failed: no camera detected??
-    let response = { result: "Critical", message: "Camera not available" };
+    let response = { result: "Critical", message: "Camera\nnot available" };
     event.emit('finished', response);
   }
 });
